@@ -9,11 +9,15 @@ const int window_height = 480u;
 
 struct pixel_color {
     int r, g, b;
-public:
     pixel_color(int r, int g, int b): r(r), g(g), b(b) {};
     sf::Color to_sfml_color() {return sf::Color(r, g, b);}
-
+   
 };
+
+std::ostream& operator<<(std::ostream& stream, const pixel_color color) {
+    stream << "{RGB: " << color.r << " " << color.g << " " << color.b << "}\n";
+    return stream;
+}
 
 struct pixel_bufer {
     int width;
@@ -80,7 +84,7 @@ struct geom_sphere3 {
 static const pixel_dot PIXEL_SPHERE_CENTER = {window_width / 2, window_height / 2};
 static const pixel_color OUT_SPHERE_COLOR = {32, 32, 32};
 // static const pixel_color COLOR_RED = {255, 0, 0};
-static const double PIXEL_SCALE = 1.0 / 100;
+static const double PIXEL_SCALE = 1.0 / 200;
 
 static const double GEOM_SPHERE_RADIUS = 1;
 static const geom_dot2 GEOM2_SPHERE_CENTER = geom_dot2(0, 0);
@@ -120,8 +124,7 @@ int main()
             geom_sphere3 sphere3(GEOM3_SPHERE_CENTER, GEOM_SPHERE_RADIUS);
             geom_dot3 sphere_dot = sphere3.place_dot2_on_sphere(dot2);
 
-            pixel_color color = {32 + sphere_dot.x * 255, 32 + sphere_dot.y * 255, 32 + sphere_dot.z * 255};
-
+            pixel_color color = {32 + sphere_dot.z * 100, 32 + sphere_dot.z * 100, 32 + sphere_dot.z * 100};
             draw_pixel(window_pixel_bufer, cur_pixel, color);
             
         }
