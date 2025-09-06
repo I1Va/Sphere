@@ -3,7 +3,7 @@ project(Sphere LANGUAGES CXX)
 
 find_package(SFML 3 REQUIRED COMPONENTS Graphics Audio Network)
 
-add_executable(Sphere main.cpp)
+add_executable(Sphere main.cpp src/geometry.cpp src/visual.cpp src/calculations.cpp)
 
 target_include_directories(Sphere
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc
