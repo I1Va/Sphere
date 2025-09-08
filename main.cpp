@@ -15,9 +15,10 @@ const visual_parameters main_pars
 {
     .pixel_scale = 1.0 / 200,
     .pixel_cordsys_offset = {window_width / 2, window_height / 2},
-    .sphere_center = geom_dot3(0, 0, 0),
     .outsphere_color = pixel_color(32, 32, 32),
-    .sphere_radius = 1
+    .ambient_intensity = 0.15,
+    .light_src_center = geom_dot3(-4, 5, 5),
+    .light_src_intensity = 0.2
 };
 
 

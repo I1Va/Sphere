@@ -1,6 +1,10 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
+#include <cmath>
+#include <iostream>
+
+
 struct geom_dot3;
 struct geom_dot2;
 class geom_vector2;
@@ -30,8 +34,17 @@ public:
 
 class geom_vector3 {
     double x, y, z;
+    double len;
 public:
-    geom_vector3(double x, double y, double z): x(x), y(y), z(z) {};    
+    geom_vector3(double x, double y, double z): x(x), y(y), z(z) { len = std::sqrt(x * x + y * y + z * z); };    
+    geom_vector3(geom_dot3 dot): x(dot.x), y(dot.y), z(dot.z) {}; 
+
+    double get_len() { return len; };
+    geom_vector3 operator-(const geom_vector3& other);
+    geom_vector3 operator!();
+    double operator^(const geom_vector3& other);
+
+    friend std::ostream& operator<<(std::ostream& stream, const geom_vector3 &vector);
 };
 
 struct geom_sphere2 {

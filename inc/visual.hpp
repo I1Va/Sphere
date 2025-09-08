@@ -39,9 +39,16 @@ struct pixel_dot {
 struct visual_parameters {
     double pixel_scale;
     pixel_dot pixel_cordsys_offset;
-    geom_dot3 sphere_center;
     pixel_color outsphere_color;
-    double sphere_radius;
+    double ambient_intensity;
+    geom_dot3 light_src_center;
+    double light_src_intensity;
+};
+
+class light_source {
+    geom_dot3 center;
+    double intensity;
+    light_source(geom_dot3 center, double intensity): center(center), intensity(intensity) {};
 };
 
 
