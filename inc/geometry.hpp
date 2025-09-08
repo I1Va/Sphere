@@ -14,11 +14,14 @@ struct geom_sphere3;
 
 bool is_dot_on_sphere2(geom_dot2 dot, geom_dot2 center, double radius);
 bool is_dot_on_sphere2(geom_dot2 dot, geom_dot2 center, double radius);
+geom_vector3 rotate_tow_vec(const double radians, const geom_vector3 &rot_vec, const geom_vector3 &anch_ve);
 
 
-struct geom_dot3 {
+class geom_dot3 {
+public:
     double x, y, z;
-    geom_dot3(double x, double y, double z): x(x), y(y), z(z) {};  
+    geom_dot3(double x, double y, double z): x(x), y(y), z(z) {};
+    friend std::ostream& operator<<(std::ostream& stream, const geom_dot3 &dot);
 };
 
 struct geom_dot2 {
@@ -39,11 +42,15 @@ public:
     geom_vector3(double x, double y, double z): x(x), y(y), z(z) { len = std::sqrt(x * x + y * y + z * z); };    
     geom_vector3(geom_dot3 dot): x(dot.x), y(dot.y), z(dot.z) {}; 
 
-    double get_len() { return len; };
-    geom_vector3 operator-(const geom_vector3& other);
-    geom_vector3 operator!();
-    double operator^(const geom_vector3& other);
-
+    double get_len() const { return len; };
+    geom_vector3 operator-(const geom_vector3& other) const;
+    geom_vector3 operator!() const;
+    geom_vector3 operator+(const geom_vector3 &other) const;
+    
+    double operator^(const geom_vector3& other) const ;
+    geom_vector3 operator*(const geom_vector3 &other) const;
+    geom_vector3 operator*(const double scalar) const;
+    
     friend std::ostream& operator<<(std::ostream& stream, const geom_vector3 &vector);
 };
 

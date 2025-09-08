@@ -43,6 +43,8 @@ struct visual_parameters {
     double ambient_intensity;
     geom_dot3 light_src_center;
     double light_src_intensity;
+    geom_dot3 view_center;
+    double view_light_pow;
 };
 
 class light_source {
