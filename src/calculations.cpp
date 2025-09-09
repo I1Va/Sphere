@@ -50,3 +50,17 @@ void fill_vertex_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters 
         }
     }
 }
+
+void update_light_src_position(geom_dot3 *light_src_center, double speed_coef, double radius) {
+    assert(light_src_center);
+
+    static double cur_radians = std::acos(light_src_center->x / radius);
+    cur_radians += M_PI * 2 * speed_coef;
+
+    *light_src_center = geom_dot3
+    (
+        radius * std::cos(cur_radians),
+        radius * std::sin(cur_radians),
+        light_src_center->z
+    );
+}

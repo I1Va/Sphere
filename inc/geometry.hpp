@@ -22,7 +22,7 @@ public:
     double x, y, z;
     geom_dot3(double x, double y, double z): x(x), y(y), z(z) {};
     geom_dot3(const geom_vector3& src);
-    double get_radius_len() {return std::sqrt(x * x + y * y + z * z); }
+    double get_xy_radius_len() {return std::sqrt(x * x + y * y); }
     friend std::ostream& operator<<(std::ostream& stream, const geom_dot3 &dot);
 };
 

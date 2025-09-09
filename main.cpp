@@ -8,72 +8,41 @@
 #include "calculations.hpp"
 
 
-static const int window_width = 640;
-static const int window_height = 480u;
+static const int WINDOW_WIDTH = 640;
+static const int WINDOW_HEIGHT = 480;
+static const double ANIMATION_SPEED = 0.01;
 
 visual_parameters main_pars
 {
     .pixel_scale = 1.0 / 200,
-    .pixel_cordsys_offset = {window_width / 2, window_height / 2},
+    .pixel_cordsys_offset = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
     .outsphere_color = pixel_color(32, 32, 32),
     .ambient_intensity = 0.2,
-    .light_src_center = geom_dot3(-6, 0, 0),
+    .light_src_center = geom_dot3(10, 0, 10),
     .light_src_intensity = 0.5,
     .view_center = geom_dot3(0, 0, 5),
-    .view_light_pow = 5
+    .view_light_pow = 10
 };
 
-void update_light_src(geom_dot3 *light_src_center, double speed_coef) {
-    double radius = light_src_center->get_radius_len();
-    double angle = M_PI * 2 * speed_coef;
-
-    *light_src_center = geom_dot3
-    (
-        light_src_center->x + radius * std::cos(angle),
-        light_src_center->y + radius * std::sin(angle),
-        light_src_center->z
-    );
-}
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({window_width, window_height}), "Sphere");
-    pixel_bufer window_pixel_bufer(window_width, window_height);
+    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Sphere");
+    pixel_bufer window_pixel_bufer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    
 
-    while (window.isOpen())
-    {
-    
-        while (const std::optional event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>()) {
+    while (window.isOpen()) {
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>())
                 window.close();
-            } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                switch (keyPressed->scancode)
-                    {
-                    case sf::Keyboard::Scan::Q: main_pars.light_src_center.x += 0.1; break;
-                    case sf::Keyboard::Scan::A: main_pars.light_src_center.x -= 0.1; break;
-
-                    case sf::Keyboard::Scan::W: main_pars.light_src_center.y += 0.1; break;
-                    case sf::Keyboard::Scan::S: main_pars.light_src_center.y -= 0.1; break;
-
-                    case sf::Keyboard::Scan::E: main_pars.light_src_center.z += 0.1; break;
-                    case sf::Keyboard::Scan::D: main_pars.light_src_center.z -= 0.1; break;
-                    
-                    default:
-                        break;
-                    }
-            }
-            
-            std::cout << main_pars.light_src_center << "\n";
         }
 
-
         window.clear();
+    
+        static const double trajectory_radius = main_pars.light_src_center.get_xy_radius_len();
+        update_light_src_position(&main_pars.light_src_center, ANIMATION_SPEED, trajectory_radius);
 
         fill_vertex_bufer(window_pixel_bufer, &main_pars);
-        // update_light_src(&main_pars.light_src_center, 0.001);
         window.draw(window_pixel_bufer.data.data(), window_pixel_bufer.data.size(), sf::PrimitiveType::Points);
 
         window.display();
