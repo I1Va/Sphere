@@ -54,3 +54,6 @@ std::ostream& operator<<(std::ostream& stream, const geom_dot3 &dot) {
     return stream;
 }
 
+geom_vector3 cord_mul(const geom_vector3 &a, const geom_vector3 &b) {
+    return geom_vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+}

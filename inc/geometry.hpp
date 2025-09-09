@@ -20,7 +20,7 @@ geom_vector3 get_ortogonal(const geom_vector3 &a, const geom_vector3 &b);
 class geom_dot3 {
 public:
     double x, y, z;
-    geom_dot3(double x, double y, double z): x(x), y(y), z(z) {};
+    geom_dot3(const double x, const double y, const double z): x(x), y(y), z(z) {};
     geom_dot3(const geom_vector3& src);
     double get_xy_radius_len() {return std::sqrt(x * x + y * y); }
     friend std::ostream& operator<<(std::ostream& stream, const geom_dot3 &dot);
@@ -43,7 +43,7 @@ class geom_vector3 {
 public:
     geom_vector3(double x, double y, double z): x(x), y(y), z(z) { len = std::sqrt(x * x + y * y + z * z); };    
     geom_vector3(geom_dot3 dot): x(dot.x), y(dot.y), z(dot.z) { len = std::sqrt(x * x + y * y + z * z); }; 
-
+    geom_vector3(const double val): x(val), y(val), z(val) {};
     double get_x() const { return x; };
     double get_y() const { return y; };
     double get_z() const { return z; };
@@ -59,6 +59,7 @@ public:
     geom_vector3 operator*(const double scalar) const;
     
     friend std::ostream& operator<<(std::ostream& stream, const geom_vector3 &vector);
+    friend geom_vector3 cord_mul(const geom_vector3 &a, const geom_vector3 &b);
 };
 
 struct geom_sphere2 {

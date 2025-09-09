@@ -5,6 +5,9 @@
 static const geom_dot3 SPHERE_CENTER = geom_dot3(0, 0, 0);
 static const double SPHERE_RADIUS = 1;
 
+inline geom_vector3 convert_color_into_geomvec3(const pixel_color &color) {
+    return geom_vector3(color.r, color.g, color.b);
+};
 
 void fill_vertex_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters *pars) {
     for (int pixel_x = 0; pixel_x < window_pixel_bufer.width; pixel_x++) {
@@ -21,7 +24,7 @@ void fill_vertex_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters 
             geom_dot3 sphere_dot = sphere3.place_dot2_on_sphere(dot2);
 
 
-            double summary_intensity = pars->ambient_intensity;
+            geom_vector3 summary_intensity = geom_vector3(pars->ambient_intensity);
 
             geom_vector3 light_vec = geom_vector3(pars->light_src_center);
             geom_vector3 onsphere_vec = geom_vector3(sphere_dot);
@@ -31,7 +34,9 @@ void fill_vertex_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters 
             double light_ref_angle_cos = (!(sphere_to_light_vec)) ^ (!normal_vec);
 
             if (light_ref_angle_cos > 0) { 
-                double sphere_absent_light_intensity = pars->light_src_intensity * light_ref_angle_cos;
+                
+                
+                geom_vector3 sphere_absent_light_intensity = pars->light_src_intensity * light_ref_angle_cos;
                 summary_intensity += sphere_absent_light_intensity;
             }
             
@@ -43,10 +48,12 @@ void fill_vertex_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters 
             double view_angle_cos = (!sphere_to_refl_light_vec) ^ (!sphere_to_view_vec);
             
             if (view_angle_cos > 0)
-                summary_intensity += std::pow(view_angle_cos, pars->view_light_pow);
-        
-            pixel_color color = {int(summary_intensity * 150), int(summary_intensity * 150), int(summary_intensity * 150)};
-            draw_pixel(window_pixel_bufer, cur_pixel, color);
+                summary_intensity += geom_vector3(std::pow(view_angle_cos, pars->view_light_pow));
+            
+
+            geom_vector3 color = convert_color_into_geomvec3(pars->sphere_color);
+
+            draw_pixel(window_pixel_bufer, cur_pixel, cord_mul(color, summary_intensity));
         }
     }
 }

@@ -11,6 +11,7 @@ struct pixel_dot;
 
 std::ostream& operator<<(std::ostream& stream, const pixel_color color);
 void draw_pixel(pixel_bufer &pixel_bufer, pixel_dot pixel, pixel_color color);
+void draw_pixel(pixel_bufer &pixel_bufer, pixel_dot pixel, const geom_vector3 &color_vec);
 geom_dot2 convert_pixel_to_geom_dot2(pixel_dot pixel, double pixel_scale, pixel_dot pixel_cordsys_offset);
 
 
@@ -42,7 +43,8 @@ struct visual_parameters {
     pixel_color outsphere_color;
     double ambient_intensity;
     geom_dot3 light_src_center;
-    double light_src_intensity;
+    geom_vector3 light_src_intensity;
+    pixel_color sphere_color;
     geom_dot3 view_center;
     double view_light_pow;
 };

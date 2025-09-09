@@ -10,6 +10,11 @@ void draw_pixel(pixel_bufer &pixel_bufer, pixel_dot pixel, pixel_color color) {
     pixel_bufer.data[pixel.y * pixel_bufer.width + pixel.x] = {pixel.to_sfml_vec2(), color.to_sfml_color()};
 }
 
+void draw_pixel(pixel_bufer &pixel_bufer, pixel_dot pixel, const geom_vector3 &color_vec) {
+    pixel_color color = pixel_color(int(color_vec.get_x()), int(color_vec.get_y()), int(color_vec.get_z()));
+    pixel_bufer.data[pixel.y * pixel_bufer.width + pixel.x] = {pixel.to_sfml_vec2(), color.to_sfml_color()};
+}
+
 geom_dot2 convert_pixel_to_geom_dot2(pixel_dot pixel, double pixel_scale, pixel_dot pixel_cordsys_offset) {
     pixel_dot pixel_with_offset = pixel_dot(pixel.x, pixel.y) - pixel_cordsys_offset;
     geom_dot2 geom_dot((double)(pixel_with_offset.x) * pixel_scale, (double) (pixel_with_offset.y) * pixel_scale);
