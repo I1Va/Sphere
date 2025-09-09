@@ -17,12 +17,23 @@ visual_parameters main_pars
     .pixel_cordsys_offset = {window_width / 2, window_height / 2},
     .outsphere_color = pixel_color(32, 32, 32),
     .ambient_intensity = 0.2,
-    .light_src_center = geom_dot3(4, 4, 4),
-    .light_src_intensity = 0.17,
-    .view_center = geom_dot3(3, 3, 3),
-    .view_light_pow = 1.0
+    .light_src_center = geom_dot3(-6, 0, 0),
+    .light_src_intensity = 0.5,
+    .view_center = geom_dot3(0, 0, 5),
+    .view_light_pow = 5
 };
 
+void update_light_src(geom_dot3 *light_src_center, double speed_coef) {
+    double radius = light_src_center->get_radius_len();
+    double angle = M_PI * 2 * speed_coef;
+
+    *light_src_center = geom_dot3
+    (
+        light_src_center->x + radius * std::cos(angle),
+        light_src_center->y + radius * std::sin(angle),
+        light_src_center->z
+    );
+}
 
 int main()
 {
@@ -54,6 +65,7 @@ int main()
                         break;
                     }
             }
+            
             std::cout << main_pars.light_src_center << "\n";
         }
 
@@ -61,6 +73,7 @@ int main()
         window.clear();
 
         fill_vertex_bufer(window_pixel_bufer, &main_pars);
+        // update_light_src(&main_pars.light_src_center, 0.001);
         window.draw(window_pixel_bufer.data.data(), window_pixel_bufer.data.size(), sf::PrimitiveType::Points);
 
         window.display();

@@ -14,13 +14,15 @@ struct geom_sphere3;
 
 bool is_dot_on_sphere2(geom_dot2 dot, geom_dot2 center, double radius);
 bool is_dot_on_sphere2(geom_dot2 dot, geom_dot2 center, double radius);
-geom_vector3 rotate_tow_vec(const double radians, const geom_vector3 &rot_vec, const geom_vector3 &anch_ve);
+geom_vector3 get_ortogonal(const geom_vector3 &a, const geom_vector3 &b);
 
 
 class geom_dot3 {
 public:
     double x, y, z;
     geom_dot3(double x, double y, double z): x(x), y(y), z(z) {};
+    geom_dot3(const geom_vector3& src);
+    double get_radius_len() {return std::sqrt(x * x + y * y + z * z); }
     friend std::ostream& operator<<(std::ostream& stream, const geom_dot3 &dot);
 };
 
@@ -40,13 +42,18 @@ class geom_vector3 {
     double len;
 public:
     geom_vector3(double x, double y, double z): x(x), y(y), z(z) { len = std::sqrt(x * x + y * y + z * z); };    
-    geom_vector3(geom_dot3 dot): x(dot.x), y(dot.y), z(dot.z) {}; 
+    geom_vector3(geom_dot3 dot): x(dot.x), y(dot.y), z(dot.z) { len = std::sqrt(x * x + y * y + z * z); }; 
+
+    double get_x() const { return x; };
+    double get_y() const { return y; };
+    double get_z() const { return z; };
 
     double get_len() const { return len; };
     geom_vector3 operator-(const geom_vector3& other) const;
     geom_vector3 operator!() const;
     geom_vector3 operator+(const geom_vector3 &other) const;
-    
+    geom_vector3 operator+=(const geom_vector3 &other);
+
     double operator^(const geom_vector3& other) const ;
     geom_vector3 operator*(const geom_vector3 &other) const;
     geom_vector3 operator*(const double scalar) const;

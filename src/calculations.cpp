@@ -22,27 +22,30 @@ void fill_vertex_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters 
 
 
             double summary_intensity = pars->ambient_intensity;
-            // vector calculations
-            geom_vector3 light_vector = geom_vector3(pars->light_src_center);
-            geom_vector3 onsphere_vector = geom_vector3(sphere_dot);
-            geom_vector3 normal_vector = onsphere_vector;
-            double light_ref_angle_cos = std::clamp((!(light_vector - onsphere_vector)) ^ (normal_vector), -1.0, 1.0);
-            double light_ref_angle = std::acos(light_ref_angle_cos);
-            double sphere_dot_light_intensity = pars->light_src_intensity * light_ref_angle_cos;
-            summary_intensity += sphere_dot_light_intensity;
 
-            geom_vector3 view_vector = geom_vector3(pars->view_center);
-            geom_vector3 sphere_to_light_vector = rotate_tow_vec(light_ref_angle * 2, light_vector - onsphere_vector, normal_vector);
-            geom_vector3 sphere_to_view_vector = view_vector - sphere_dot;
-            double view_angle_cos = (!sphere_to_light_vector) ^ (!sphere_to_view_vector);
-            std:: cout << !sphere_to_light_vector << " " << !sphere_to_view_vector << "\n";
-            std::cout << "cos : " << view_angle_cos << "\n";
-            if (view_angle_cos > 0) {
-                summary_intensity += std::pow(view_angle_cos, pars->view_light_pow);
+            geom_vector3 light_vec = geom_vector3(pars->light_src_center);
+            geom_vector3 onsphere_vec = geom_vector3(sphere_dot);
+            geom_vector3 sphere_to_light_vec = light_vec - onsphere_vec;
+            geom_vector3 normal_vec = onsphere_vec;
+
+            double light_ref_angle_cos = (!(sphere_to_light_vec)) ^ (!normal_vec);
+
+            if (light_ref_angle_cos > 0) { 
+                double sphere_absent_light_intensity = pars->light_src_intensity * light_ref_angle_cos;
+                summary_intensity += sphere_absent_light_intensity;
             }
+            
 
-            pixel_color color = {summary_intensity * 200, summary_intensity * 200, summary_intensity * 200};
-            std::cout << "color : " << color << "\n";
+            
+            geom_vector3 sphere_to_refl_light_vec = sphere_to_light_vec - get_ortogonal(sphere_to_light_vec, normal_vec) * 2;
+            
+            geom_vector3 sphere_to_view_vec = geom_vector3(pars->view_center) - onsphere_vec;
+            double view_angle_cos = (!sphere_to_refl_light_vec) ^ (!sphere_to_view_vec);
+            
+            if (view_angle_cos > 0)
+                summary_intensity += std::pow(view_angle_cos, pars->view_light_pow);
+        
+            pixel_color color = {int(summary_intensity * 150), int(summary_intensity * 150), int(summary_intensity * 150)};
             draw_pixel(window_pixel_bufer, cur_pixel, color);
         }
     }
