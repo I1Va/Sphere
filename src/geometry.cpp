@@ -37,44 +37,64 @@ geom_vector2::geom_vector2(const double x, const double y): x(x), y(y) {};
 
 
 // geom_vector3
-geom_vector3::geom_vector3(const double x, const double y, const double z): x(x), y(y), z(z) { len = std::sqrt(x * x + y * y + z * z); };    
-geom_vector3::geom_vector3(const geom_dot3 &dot): x(dot.get_x()), y(dot.get_y()), z(dot.get_z()) { len = std::sqrt(x * x + y * y + z * z); }; 
-geom_vector3::geom_vector3(const double val): x(val), y(val), z(val) {};
+geom_vector3::geom_vector3(const double x, const double y, const double z): x(x), y(y), z(z), len2(NAN) {};    
+geom_vector3::geom_vector3(const geom_dot3 &dot): x(dot.get_x()), y(dot.get_y()), z(dot.get_z()), len2(NAN) {};
+geom_vector3::geom_vector3(const double val): x(val), y(val), z(val), len2(NAN) {};
 
 double geom_vector3::get_x() const { return x; };
 double geom_vector3::get_y() const { return y; };
 double geom_vector3::get_z() const { return z; };
-double geom_vector3::get_len() const { return len; };
+double geom_vector3::get_len2() {
+    if (len2 == NAN)
+        len2 = x * x + y * y + z * z;
+    return len2;
+};
 
-geom_vector3    geom_vector3::operator*(const geom_vector3& other) const {
+geom_vector3 geom_vector3::operator-(const geom_vector3 &other) {
+    len2 = NAN;
+    return geom_vector3(x - other.x, y - other.y, z - other.z);
+}
+
+geom_vector3 geom_vector3::operator*(const geom_vector3& other) {
+    len2 = NAN;
     return geom_vector3(y * other.z - z * other.y,
                         z * other.x - x * other.z,
                         x * other.y - y * other.x);
 }
-geom_vector3    geom_vector3::operator*(const double scalar) const {
+
+geom_vector3 geom_vector3::operator*(const double scalar) {
+    if (len2 != NAN) len2 *= scalar * scalar;
+
     return geom_vector3(x * scalar, y * scalar, z * scalar);
 }
-geom_vector3    geom_vector3::operator-(const geom_vector3 &other) const {
-    return geom_vector3(x - other.x, y - other.y, z - other.z);
-}
-geom_vector3    geom_vector3::operator+(const geom_vector3 &other) const {
+
+geom_vector3 geom_vector3::operator+(const geom_vector3 &other) {
+    len2 = NAN;
     return geom_vector3(x + other.x, y + other.y, z + other.z);
 }
-geom_vector3    geom_vector3::operator!() const {
+
+geom_vector3 geom_vector3::operator!() {
+    double len = std::sqrt(get_len2());
+    len2 = NAN;
+
     return geom_vector3(x / len, y / len, z / len);
 }
-geom_vector3    geom_vector3::operator+=(const geom_vector3 &other) {
+
+geom_vector3 geom_vector3::operator+=(const geom_vector3 &other) {
+    len2 = NAN;
     x += other.x;
     y += other.y;
     z += other.z;
-    len = std::sqrt(x * x + y * y + z * z);
     return *this;
 }
-double          geom_vector3::operator^(const geom_vector3& other) const {
+
+double geom_vector3::operator^(const geom_vector3& other) {
+    len2 = NAN;
     return x * other.x + y * other.y + z * other.z;
 }
 
-geom_vector3 geom_vector3::clamp(const double min, const double max) const {
+geom_vector3 geom_vector3::clamp(const double min, const double max) {
+    len2 = NAN;
     return geom_vector3
     (
         std::clamp(x, min, max),
@@ -82,7 +102,6 @@ geom_vector3 geom_vector3::clamp(const double min, const double max) const {
         std::clamp(z, min, max)
     );
 }
-
 
 std::ostream&   operator<<(std::ostream& stream, const geom_vector3 &vector) {
     stream << "geom_vector3 {" << vector.x << ", " << vector.y << ", " << vector.z << "}\n";
@@ -120,7 +139,7 @@ geom_dot3 geom_sphere3::place_dot2_on_sphere(const geom_dot2 &dot) {
 
 // general functions:
 geom_vector3 get_ortogonal(const geom_vector3 &a, const geom_vector3 &b) {
-    double b_len = b.get_len();
+    double b_len = std::sqrt(b.get_len2());
     double c = (a ^ b) / (b_len * b_len);
     return a - b * c;
 }

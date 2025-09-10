@@ -55,7 +55,7 @@ public:
 
 class geom_vector3 {
     double x, y, z;
-    double len;
+    double len2;
 public:
     geom_vector3(const double x, const double y, const double z);
     explicit geom_vector3(const geom_dot3 &dot);
@@ -64,17 +64,19 @@ public:
     double get_x() const;
     double get_y() const;
     double get_z() const;
-    double get_len() const;
+    double get_len2(); 
 
-    geom_vector3 operator-(const geom_vector3 &other) const;
-    geom_vector3 operator!() const;
-    geom_vector3 operator+(const geom_vector3 &other) const;
+    geom_vector3 operator-(const geom_vector3 &other);
+    geom_vector3 operator*(const geom_vector3 &other);
+    geom_vector3 operator*(const double scalar);
+    geom_vector3 operator+(const geom_vector3 &other);
+    geom_vector3 operator!();   
     geom_vector3 operator+=(const geom_vector3 &other);
-    double       operator^(const geom_vector3 &other) const;
-    geom_vector3 operator*(const geom_vector3 &other) const;
-    geom_vector3 operator*(const double scalar) const;
+    double       operator^(const geom_vector3 &other);
     
-    geom_vector3 clamp(const double min, const double max) const;
+    
+    
+    geom_vector3 clamp(const double min, const double max);
     friend std::ostream &operator<<(std::ostream &stream, const geom_vector3 &vector);
     friend geom_vector3 cord_mul(const geom_vector3 &a, const geom_vector3 &b);
     friend geom_vector3 cord_pow(const geom_vector3 &a, const double pow_val);

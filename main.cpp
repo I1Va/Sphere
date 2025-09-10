@@ -32,6 +32,19 @@ visual_parameters main_pars
 };
 
 
+// class coord_system {
+//     geom_dot3 center;
+//     double pixel_scale;
+// public:
+//     coord_system(const geom_dot3 &center, const double pixel_scale)
+// };
+
+// void make_axes(const geom_dot3 ) {
+
+// }
+
+
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Sphere");
