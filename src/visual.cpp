@@ -1,6 +1,8 @@
 #include "visual.hpp"
 #include <cmath>
 
+const static int COLOR_MAX_VAL = 255;
+
 
 // pixel_color
 sf::Color pixel_color::to_sfml_color() const { return sf::Color(r, g, b); }
@@ -36,7 +38,10 @@ void draw_pixel(pixel_bufer &pixel_bufer, const pixel_dot &pixel, const pixel_co
 }
 
 void draw_pixel(pixel_bufer &pixel_bufer, const pixel_dot &pixel, const geom_vector3 &color_vec) {
-    pixel_color color = {int(color_vec.get_x()), int(color_vec.get_y()), int(color_vec.get_z())};
+    pixel_color color = {int(color_vec.get_x() * COLOR_MAX_VAL),
+                         int(color_vec.get_y() * COLOR_MAX_VAL), 
+                         int(color_vec.get_z() * COLOR_MAX_VAL)};
+            
     pixel_bufer[pixel] = {pixel.to_sfml_vec2(), color.to_sfml_color()};
 }
 

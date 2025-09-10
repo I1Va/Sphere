@@ -36,7 +36,7 @@ class geom_dot3 {
     double x, y, z;
 public:
     geom_dot3(const double x, const double y, const double z);
-    geom_dot3(const geom_vector3 &src);
+    explicit geom_dot3(const geom_vector3 &src);
 
     double get_x() const;
     double get_y() const;
@@ -58,8 +58,8 @@ class geom_vector3 {
     double len;
 public:
     geom_vector3(const double x, const double y, const double z);
-    geom_vector3(const geom_dot3 &dot);
-    geom_vector3(const double val);
+    explicit geom_vector3(const geom_dot3 &dot);
+    explicit geom_vector3(const double val);
     
     double get_x() const;
     double get_y() const;
@@ -73,9 +73,11 @@ public:
     double       operator^(const geom_vector3 &other) const;
     geom_vector3 operator*(const geom_vector3 &other) const;
     geom_vector3 operator*(const double scalar) const;
+    
+    geom_vector3 clamp(const double min, const double max) const;
     friend std::ostream &operator<<(std::ostream &stream, const geom_vector3 &vector);
     friend geom_vector3 cord_mul(const geom_vector3 &a, const geom_vector3 &b);
-    
+    friend geom_vector3 cord_pow(const geom_vector3 &a, const double pow_val);
 };
 
 class geom_sphere2 {

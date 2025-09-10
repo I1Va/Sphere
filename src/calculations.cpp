@@ -9,26 +9,30 @@ inline geom_vector3 convert_color_into_geomvec3(const pixel_color &color) {
     return geom_vector3(color.r, color.g, color.b);
 };
 
-geom_vector3 get_absent_light_intensity(const geom_vector3 &sphere_to_light_vec, const geom_vector3 &onsphere_vec, const geom_vector3 &light_src_intensity) {
+geom_vector3 get_defuse_light_intensity(const geom_vector3 &sphere_to_light_vec, const geom_vector3 &onsphere_vec, const geom_vector3 &defuse_intensity) {
     geom_vector3 normal_vec = onsphere_vec;
 
     double light_ref_angle_cos = (!(sphere_to_light_vec)) ^ (!normal_vec);
 
     if (light_ref_angle_cos > 0)
-        return light_src_intensity * light_ref_angle_cos;
+        return defuse_intensity * light_ref_angle_cos;
     return geom_vector3(0, 0, 0);
 }
 
-geom_vector3 get_glare_intension(const geom_vector3 &sphere_to_light_vec, const geom_vector3 &onsphere_vec, const geom_dot3 &view_center, const double view_light_pow) {
+geom_vector3 get_specular_intensity(const geom_vector3 &sphere_to_light_vec, const geom_vector3 &onsphere_vec, const geom_dot3 &view_center, 
+                                    const geom_vector3& intensity, const double view_light_pow) {
     geom_vector3 sphere_to_refl_light_vec = sphere_to_light_vec - get_ortogonal(sphere_to_light_vec, onsphere_vec) * 2;
     
     geom_vector3 sphere_to_view_vec = geom_vector3(view_center) - onsphere_vec;
     double view_angle_cos = (!sphere_to_refl_light_vec) ^ (!sphere_to_view_vec);
-    
+
+
+    geom_vector3 res_intensity = intensity * std::pow(view_angle_cos, view_light_pow); 
+    // тут можно добавить учет угла брюстера
     if (view_angle_cos > 0)
-        return geom_vector3(std::pow(view_angle_cos, view_light_pow));
-    return geom_vector3(0, 0, 0);
-            
+        return res_intensity;
+        
+    return geom_vector3(0, 0, 0);        
 }
 
 void fill_pixel_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters *pars) {
@@ -51,13 +55,16 @@ void fill_pixel_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters *
             geom_vector3 sphere_to_light_vec = light_vec - onsphere_vec;
     
 
-            geom_vector3 summary_intensity = geom_vector3(pars->ambient_intensity);
-            summary_intensity += get_absent_light_intensity(light_vec, onsphere_vec, pars->light_src_intensity);
-            summary_intensity += get_glare_intension(light_vec, onsphere_vec, pars->view_center, pars->view_light_pow);
-        
-             
-            geom_vector3 color = convert_color_into_geomvec3(pars->sphere_color);
-            draw_pixel(window_pixel_bufer, cur_pixel, cord_mul(color, summary_intensity));
+            geom_vector3 summary_intensity = cord_mul(pars->ambient_intensity, pars->sphere_color);
+            summary_intensity += cord_mul(get_defuse_light_intensity(light_vec, onsphere_vec, pars->defuse_intensity),
+                                          pars->sphere_color);
+
+            summary_intensity += get_specular_intensity(light_vec, onsphere_vec, pars->view_center, 
+                                                         pars->specular_intensity, pars->view_light_pow);
+
+            summary_intensity = summary_intensity.clamp(0.0, 1.0);
+
+            draw_pixel(window_pixel_bufer, cur_pixel, summary_intensity);
         }
     }
 }

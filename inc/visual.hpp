@@ -56,15 +56,19 @@ public:
 };
 
 struct visual_parameters {
-    double pixel_scale;
-    pixel_dot pixel_cordsys_offset;
     pixel_color outsphere_color;
-    double ambient_intensity;
+
+    geom_vector3 sphere_color;
+    geom_vector3 ambient_intensity;
+    geom_vector3 defuse_intensity;
+    geom_vector3 specular_intensity;
+
     geom_dot3 light_src_center;
-    geom_vector3 light_src_intensity;
-    pixel_color sphere_color;
     geom_dot3 view_center;
+    
     double view_light_pow;
+    double pixel_scale;
+    pixel_dot pixel_cordsys_offset;    
 };
 
 struct light_source {

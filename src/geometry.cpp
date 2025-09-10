@@ -1,6 +1,7 @@
 #include "geometry.hpp"
 #include <cfloat>
 #include <cmath>
+#include <algorithm>
 #include <cassert>
 
 
@@ -73,6 +74,16 @@ double          geom_vector3::operator^(const geom_vector3& other) const {
     return x * other.x + y * other.y + z * other.z;
 }
 
+geom_vector3 geom_vector3::clamp(const double min, const double max) const {
+    return geom_vector3
+    (
+        std::clamp(x, min, max),
+        std::clamp(y, min, max),
+        std::clamp(z, min, max)
+    );
+}
+
+
 std::ostream&   operator<<(std::ostream& stream, const geom_vector3 &vector) {
     stream << "geom_vector3 {" << vector.x << ", " << vector.y << ", " << vector.z << "}\n";
     return stream;
@@ -80,6 +91,15 @@ std::ostream&   operator<<(std::ostream& stream, const geom_vector3 &vector) {
 
 geom_vector3 cord_mul(const geom_vector3 &a, const geom_vector3 &b) {
     return geom_vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
+geom_vector3 cord_pow(const geom_vector3 &a, const double pow_val) {
+    return geom_vector3
+    (
+        std::pow(a.x, pow_val),
+        std::pow(a.y, pow_val),
+        std::pow(a.z, pow_val)
+    );
 }
 
 
