@@ -45,8 +45,9 @@ double geom_vector3::get_x() const { return x; };
 double geom_vector3::get_y() const { return y; };
 double geom_vector3::get_z() const { return z; };
 double geom_vector3::get_len2() {
-    if (len2 == NAN)
+    if (std::isnan(len2))
         len2 = x * x + y * y + z * z;
+
     return len2;
 };
 
@@ -103,7 +104,7 @@ geom_vector3 geom_vector3::clamp(const double min, const double max) {
     );
 }
 
-std::ostream&   operator<<(std::ostream& stream, const geom_vector3 &vector) {
+std::ostream& operator<<(std::ostream& stream, const geom_vector3 &vector) {
     stream << "geom_vector3 {" << vector.x << ", " << vector.y << ", " << vector.z << "}\n";
     return stream;
 }
@@ -138,7 +139,7 @@ geom_dot3 geom_sphere3::place_dot2_on_sphere(const geom_dot2 &dot) {
 }
 
 // general functions:
-geom_vector3 get_ortogonal(const geom_vector3 &a, const geom_vector3 &b) {
+geom_vector3 get_ortogonal(geom_vector3 &a, geom_vector3 &b) {
     double b_len = std::sqrt(b.get_len2());
     double c = (a ^ b) / (b_len * b_len);
     return a - b * c;

@@ -13,7 +13,7 @@ struct geom_sphere2;
 struct geom_sphere3;
 
 
-geom_vector3 get_ortogonal(const geom_vector3 &a, const geom_vector3 &b);
+geom_vector3 get_ortogonal(geom_vector3 &a, geom_vector3 &b);
 bool is_dot_on_sphere2(const geom_dot2 &dot, const geom_dot2 &center, const double radius);
 
 

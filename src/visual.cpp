@@ -23,6 +23,9 @@ pixel_bufer::pixel_bufer(int width, int height): width(width), height(height), v
 sf::Vertex& pixel_bufer::operator[](const pixel_dot &dot) {
     return vector_data[dot.get_y() * width + dot.get_x()];
 }
+int pixel_bufer::get_width() const { return width; }
+int pixel_bufer::get_height() const { return height; }
+
 
 size_t pixel_bufer::size() const { return vector_data.size(); }
 const sf::Vertex *pixel_bufer::data() const { return vector_data.data(); }

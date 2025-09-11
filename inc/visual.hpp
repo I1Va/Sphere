@@ -47,6 +47,8 @@ class pixel_bufer {
     std::vector<sf::Vertex> vector_data;
 public:
     size_t size() const;
+    int get_width() const;
+    int get_height() const;
     const sf::Vertex *data() const;
     pixel_bufer(const int width, const int height);
     sf::Vertex& operator[](const pixel_dot &dot);

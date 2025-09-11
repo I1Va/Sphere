@@ -60,9 +60,9 @@ int main()
         window.clear();
     
         static const double trajectory_radius = main_pars.light_src_center.get_xy_radius_len();
-        update_light_src_position(&main_pars.light_src_center, ANIMATION_SPEED, trajectory_radius);
+        update_light_src_position(main_pars.light_src_center, ANIMATION_SPEED, trajectory_radius);
 
-        fill_pixel_bufer(window_pixel_bufer, &main_pars);
+        fill_pixel_bufer(window_pixel_bufer, main_pars);
         window.draw(window_pixel_bufer.data(), window_pixel_bufer.size(), sf::PrimitiveType::Points);
 
         window.display();
