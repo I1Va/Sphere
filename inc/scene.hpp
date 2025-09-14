@@ -8,12 +8,11 @@
 class scene_manager {
     const gm_vector<double, 3> CAMERA_DELTA = gm_vector<double, 3>(0, 0, 10);
     
-    std::vector<gm_sphere<double, 3>> objects;
+    std::vector<vis_sphere> objects;
 
     gm_vector<double, 3> screen_pos;
     gm_vector<double, 3> camera_pos;
 
-    gm_vector<double, 3> sphere_color;
     gm_vector<double, 3> outsphere_color;
 
     gm_vector<double, 3> ambient_intensity;
@@ -35,7 +34,6 @@ public:
         screen_pos(screen_pos),
         camera_pos(screen_pos + CAMERA_DELTA),
         
-        sphere_color(pars.sphere_color),
         outsphere_color(pars.outsphere_color),
 
         ambient_intensity(pars.defuse_intensity),
@@ -49,7 +47,10 @@ public:
         pixel_cordsys_offset(pars.pixel_cordsys_offset)
     {}
         
-    void add_sphere(gm_sphere<double, 3> sphere) { objects.push_back(sphere); }
+    void add_sphere(gm_vector<double, 3> center, double radius, gm_vector<double, 3> color) { 
+        vis_sphere sphere = {gm_sphere<double, 3>(center, radius), color};
+        objects.push_back(sphere); 
+    }
 
     bool get_closest_sphere_intersection(
             const gm_line<double, 3> &ray, 
@@ -63,7 +64,7 @@ public:
         for (int idx = 0; idx < objects.size(); idx++) {
             if (idx == except_sphere_idx) continue;
 
-            gm_sphere<double, 3> cur_sphere = objects[idx];
+            gm_sphere<double, 3> cur_sphere = objects[idx].shape;
     
             gm_vector<double, 3> intersection_point = cur_sphere.get_closest_intersection(ray);
             if (intersection_point.is_poison()) continue;
@@ -81,25 +82,10 @@ public:
         return (*res_sphere_idx != -1);
     }
 
-    // double get_closest_sphere_distance2(const gm_line<double, 3> &ray) const {
-    //     double result_distance2 = NAN;
-    //     for (gm_sphere<double, 3> sphere : objects) {
-    //         double sphere_line_distance2 = get_dot_line_distance(ray, sphere.get_center());
-    //         if (sphere_line_distance2 > sphere.get_radius()) 
-    //             continue;
-    //         if (std::isnan(result_distance2) || result_distance2 > sphere_line_distance2)
-    //             result_distance2 = sphere_line_distance2;
-    //     }
-
-    //     return result_distance2;
-    // }
-
-
-    inline gm_sphere<double, 3> get_sphere(const size_t sphere_idx) const { return objects[sphere_idx]; }
+    inline vis_sphere get_sphere(const size_t sphere_idx) const { return objects[sphere_idx]; }
     inline gm_vector<double, 3> get_screen_pos() const { return screen_pos; }
     inline gm_vector<double, 3> get_camera_pos() const { return camera_pos; }
 
-    inline gm_vector<double, 3> get_sphere_color() const { return sphere_color; }
     inline gm_vector<double, 3> get_outsphere_color() const { return outsphere_color; }
 
     inline gm_vector<double, 3> get_ambient_intensity() const { return ambient_intensity; }
@@ -128,7 +114,6 @@ public:
         );
     }
 };
-
 
 
 #endif // SCENE_HPP

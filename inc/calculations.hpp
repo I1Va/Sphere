@@ -9,12 +9,15 @@ void fill_pixel_bufer(pixel_bufer &window_pixel_bufer, const scene_manager &scen
 
 gm_vector<double, 3> get_pixel_3d_pos(const gm_vector<int, 2> &pixel, const scene_manager &scene);
 
-// gm_vector<double, 3>  get_defuse_light_intensity(gm_vector<double, 3> sphere_to_light_vec, gm_vector<double, 3> sphere_normal_vec, 
-//                                                  gm_vector<double, 3> defuse_intensity);
+gm_vector<double, 3>  get_defuse_light_intensity(gm_vector<double, 3> sphere_to_light_vec, gm_vector<double, 3> sphere_normal_vec, 
+                                                 gm_vector<double, 3> defuse_intensity);
+                                                
+gm_vector<double, 3> get_specular_intensity(gm_vector<double, 3> sphere_to_light_vec, 
+                                            gm_vector<double, 3> sphere_point, gm_vector<double, 3> sphere_center, 
+                                            gm_vector<double, 3> camera_point, 
+                                            gm_vector<double, 3> intensity, double view_light_pow);
 
-// gm_vector<double, 3> get_specular_intensity(
-//     gm_vector<double, 3> sphere_to_light_vec, gm_vector<double, 3> sphere_point, gm_vector<double, 3> camera_point, 
-//     gm_vector<double, 3> intensity, double view_light_pow);
+double get_shadow_factor(const gm_vector<double, 3> &sphere_point, const int sphere_idx, const scene_manager &scene);
 
 
 #endif // CALCULATIONS_HPP

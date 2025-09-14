@@ -18,7 +18,6 @@ visual_parameters main_visual_parameters
 {   
     
     .outsphere_color    = gm_vector<double, 3>(0.10, 0.10, 0.10),
-    .sphere_color       = gm_vector<double, 3>(0.6, 0.1, 0.3),
 
     .ambient_intensity  = gm_vector<double, 3>(0.2, 0.2, 0.2),
     .defuse_intensity   = gm_vector<double, 3>(0.8, 0.7, 0.6),
@@ -40,10 +39,8 @@ int main()
 
     scene_manager scene({0, 0, 0}, main_visual_parameters);
 
-    gm_sphere<double, 3> sp1({5, 0, -5}, 5);
-    gm_sphere<double, 3> sp2({-5, 0, -5}, 4);
-    scene.add_sphere(sp1);
-    scene.add_sphere(sp2);
+    scene.add_sphere({5, 0, -5}, 5, {0.4, 0.1, 0.3});
+    scene.add_sphere({-5, 0, -5}, 4, {0.7, 0.3, 0.0});
     
     double trajectory_radius = scene.get_light_src_center().get_len2();
 
@@ -54,9 +51,6 @@ int main()
         }
 
         window.clear();
-
-        // std::cout << "light: " << scene.get_light_src_center();
-
     
         scene.update_light_src_position(ANIMATION_SPEED, trajectory_radius);
 

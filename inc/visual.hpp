@@ -25,10 +25,8 @@ public:
     // friend void fill_pixel_bufer(pixel_bufer &window_pixel_bufer, const visual_parameters *pars);
 };
 
-
 struct visual_parameters {
     gm_vector<double, 3> outsphere_color;
-    gm_vector<double, 3> sphere_color;
 
     gm_vector<double, 3> ambient_intensity;
     gm_vector<double, 3> defuse_intensity;
@@ -46,10 +44,10 @@ struct visual_parameters {
 
 void draw_pixel(pixel_bufer &pixel_bufer, const gm_vector<int, 2> &pixel, const gm_vector<double, 3> &color_vec);
 
-// struct light_source {
-//     geom_dot3 center;
-//     double intensity;
-// };
+struct vis_sphere {
+    gm_sphere<double, 3> shape;
+    gm_vector<double, 3> color;
+};
 
 
 #endif // VISUAL_HPP
