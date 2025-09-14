@@ -18,20 +18,19 @@ visual_parameters main_visual_parameters
 {   
     
     .outsphere_color    = gm_vector<double, 3>(0.1, 0.1, 0.1),
-    .sphere_color       = gm_vector<double, 3>(0.1, 0.8, 0.2),
+    .sphere_color       = gm_vector<double, 3>(0.6, 0.1, 0.3),
 
     .ambient_intensity  = gm_vector<double, 3>(0.2, 0.2, 0.2),
     .defuse_intensity   = gm_vector<double, 3>(0.8, 0.7, 0.6),
     .specular_intensity = gm_vector<double, 3>(0.7, 0.7, 0),
     
-    .light_src_center = gm_vector<double, 3>(10, 0, 10),
+    .light_src_center = gm_vector<double, 3>(5, 0, 0),
     .view_center      = gm_vector<double, 3>(0, 0, 5),
 
     .view_light_pow = 15,   
-    .pixel_scale = 1.0 / 200,
+    .pixel_scale = 1.0 / 40,
     .pixel_cordsys_offset = gm_vector<int, 2>(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2),
 };
-
 
 int main()
 {
@@ -40,9 +39,12 @@ int main()
 
     scene_manager scene({0, 0, 0}, main_visual_parameters);
 
-    gm_sphere<double, 3> sp1({0, 3, -10}, 1);
+    gm_sphere<double, 3> sp1({5, 0, -5}, 4);
+    gm_sphere<double, 3> sp2({-5, 0, -5}, 2);
     scene.add_sphere(sp1);
+    scene.add_sphere(sp2);
     
+    const double trajectory_radius = scene.get_light_src_center().get_len2();
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -53,8 +55,7 @@ int main()
         window.clear();
 
     
-        // static const double trajectory_radius = main_pars.light_src_center.get_xy_radius_len();
-        // update_light_src_position(main_pars.light_src_center, ANIMATION_SPEED, trajectory_radius);
+        scene.update_light_src_position(ANIMATION_SPEED, trajectory_radius);
 
         fill_pixel_bufer(window_pixel_bufer, scene);
         window.draw(window_pixel_bufer.data(), window_pixel_bufer.size(), sf::PrimitiveType::Points);

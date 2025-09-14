@@ -48,12 +48,19 @@ public:
         
     void add_sphere(const gm_sphere<double, 3> &sphere) { objects.push_back(sphere); }
 
-    gm_vector<double, 3> get_closest_sphere_intersection(const gm_line<double, 3> &ray) const {
+    bool get_closest_sphere_intersection(
+            const gm_line<double, 3> &ray, 
+            gm_vector<double, 3> *closest_intersection, int *res_sphere_idx) const 
+    {
+        *closest_intersection = gm_vector<double, 3>::POISON();
+        *res_sphere_idx = -1;
+    
         double distance2 = NAN;
-        gm_vector<double, 3> closest_sphere_intersection = gm_vector<double, 3>::POISON();
 
-        for (gm_sphere<double, 3> sphere : objects) {
-            gm_vector<double, 3> intersection_point = sphere.get_closest_intersection(ray);
+        for (int idx = 0; idx < objects.size(); idx++) {
+            gm_sphere<double, 3> cur_sphere = objects[idx];
+    
+            gm_vector<double, 3> intersection_point = cur_sphere.get_closest_intersection(ray);
             if (intersection_point.is_poison()) continue;
 
 
@@ -61,11 +68,12 @@ public:
 
             if (std::isnan(distance2) || cur_distance2 < distance2) {
                 distance2 = cur_distance2;
-                closest_sphere_intersection = intersection_point;
+                *closest_intersection = intersection_point;
+                *res_sphere_idx = idx;
             }
         }
 
-        return closest_sphere_intersection;
+        return (*res_sphere_idx != -1);
     }
 
     // double get_closest_sphere_distance2(const gm_line<double, 3> &ray) const {
@@ -82,7 +90,7 @@ public:
     // }
 
 
-
+    inline gm_sphere<double, 3> get_sphere(const size_t sphere_idx) const { return objects[sphere_idx]; }
     inline gm_vector<double, 3> get_screen_pos() const { return screen_pos; }
     inline gm_vector<double, 3> get_camera_pos() const { return camera_pos; }
 
@@ -93,12 +101,27 @@ public:
     inline gm_vector<double, 3> get_defuse_intensity() const { return defuse_intensity; }
     inline gm_vector<double, 3> get_specular_intensity() const { return specular_intensity; }
 
-    inline gm_vector<double, 3> get_light_src_center() { return light_src_center; } 
+    inline gm_vector<double, 3> get_light_src_center() const { return light_src_center; } 
     
     inline double get_view_light_pow() const { return view_light_pow; }
     inline double get_pixel_scale() const { return pixel_scale; }
-    inline gm_vector<int, 2> get_pixel_cordsys_offset() const { return pixel_cordsys_offset; }  
+    inline gm_vector<int, 2> get_pixel_cordsys_offset() const { return pixel_cordsys_offset; }
+    
+    
+    void update_light_src_position(const double speed_coef, const double radius) {
+
+        static double cur_radians = std::acos(light_src_center.get_x() / radius);
+        cur_radians += M_PI * 2 * speed_coef;
+
+        light_src_center = gm_vector<double, 3>
+        (
+            radius * std::cos(cur_radians),
+            radius * std::sin(cur_radians),
+            light_src_center.get_z()
+        );
+    }
 };
+
 
 
 #endif // SCENE_HPP
