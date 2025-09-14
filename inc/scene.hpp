@@ -23,6 +23,7 @@ class scene_manager {
     gm_vector<double, 3> light_src_center;
     
     double view_light_pow;
+    double shadow_coef;
     double pixel_scale;
     gm_vector<int, 2> pixel_cordsys_offset;  
 
@@ -41,7 +42,9 @@ public:
         defuse_intensity(pars.defuse_intensity),
         specular_intensity(pars.specular_intensity),
         light_src_center(pars.light_src_center),
+
         view_light_pow(pars.view_light_pow),
+        shadow_coef(shadow_coef),
         pixel_scale(pars.pixel_scale),
         pixel_cordsys_offset(pars.pixel_cordsys_offset)
     {}
@@ -104,6 +107,8 @@ public:
     inline gm_vector<double, 3> get_light_src_center() const { return light_src_center; } 
     
     inline double get_view_light_pow() const { return view_light_pow; }
+    inline double get_shadow_coef() const { return shadow_coef; }
+    
     inline double get_pixel_scale() const { return pixel_scale; }
     inline gm_vector<int, 2> get_pixel_cordsys_offset() const { return pixel_cordsys_offset; }
     

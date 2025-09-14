@@ -38,6 +38,8 @@ struct visual_parameters {
     gm_vector<double, 3> view_center;
     
     double view_light_pow;
+    double shadow_coef;
+    
     double pixel_scale;
     gm_vector<int, 2> pixel_cordsys_offset;    
 };
