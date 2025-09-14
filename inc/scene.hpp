@@ -44,16 +44,16 @@ public:
         light_src_center(pars.light_src_center),
 
         view_light_pow(pars.view_light_pow),
-        shadow_coef(shadow_coef),
+        shadow_coef(pars.shadow_coef),
         pixel_scale(pars.pixel_scale),
         pixel_cordsys_offset(pars.pixel_cordsys_offset)
     {}
         
-    void add_sphere(const gm_sphere<double, 3> &sphere) { objects.push_back(sphere); }
+    void add_sphere(gm_sphere<double, 3> sphere) { objects.push_back(sphere); }
 
     bool get_closest_sphere_intersection(
             const gm_line<double, 3> &ray, 
-            gm_vector<double, 3> *closest_intersection, int *res_sphere_idx) const 
+            gm_vector<double, 3> *closest_intersection, int *res_sphere_idx, const int except_sphere_idx = -1) const 
     {
         *closest_intersection = gm_vector<double, 3>::POISON();
         *res_sphere_idx = -1;
@@ -61,6 +61,8 @@ public:
         double distance2 = NAN;
 
         for (int idx = 0; idx < objects.size(); idx++) {
+            if (idx == except_sphere_idx) continue;
+
             gm_sphere<double, 3> cur_sphere = objects[idx];
     
             gm_vector<double, 3> intersection_point = cur_sphere.get_closest_intersection(ray);

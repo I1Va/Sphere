@@ -39,21 +39,21 @@ gm_vector<double, 3> get_specular_intensity(
     return gm_vector<double, 3>(0, 0, 0);        
 }
 
-gm_vector<double, 3> get_shadow(const gm_vector<double, 3> &sphere_point, const gm_vector<double, 3> &intensity, const scene_manager &scene) {
-    gm_line<double, 3> sphere_to_light_ray(sphere_point, sphere_point - scene.get_light_src_center());
+double get_shadow_factor(const gm_vector<double, 3> &sphere_point, const int sphere_idx, const scene_manager &scene) {
+    gm_line<double, 3> sphere_to_light_ray(sphere_point, scene.get_light_src_center() - sphere_point);
 
     int shadow_sphere_idx = -1;
     gm_vector<double, 3> shadow_sphere_point = gm_vector<double, 3>::POISON();
-    bool intersection_state = scene.get_closest_sphere_intersection(sphere_to_light_ray, &shadow_sphere_point, &shadow_sphere_idx);
+    bool intersection_state = scene.get_closest_sphere_intersection(sphere_to_light_ray, &shadow_sphere_point, &shadow_sphere_idx, sphere_idx);
 
     if (shadow_sphere_idx == -1) {
-        return intensity;
+        return 1.0;
     }
 
-    double shadow_distance = std::sqrt(scene.get_sphere(shadow_sphere_idx).get_distance2_to_line(sphere_to_light_ray));
+    gm_sphere<double, 3> shadow_sphere = scene.get_sphere(shadow_sphere_idx);
+    double shadow_distance = shadow_sphere.get_distance2_to_line(sphere_to_light_ray) / (shadow_sphere.get_radius() * shadow_sphere.get_radius());
 
-    // return gm_vector<double, 3>(0, 0, 0);
-    return intensity * ((M_PI / 2 + std::atan(shadow_distance * scene.get_shadow_coef())) / M_PI);
+    return 1.0 / (1 + std::exp(-scene.get_shadow_coef() * (shadow_distance - 0.5)));
 }
 
 void fill_pixel_bufer(pixel_bufer &window_pixel_bufer, const scene_manager &scene) {
@@ -90,16 +90,29 @@ void fill_pixel_bufer(pixel_bufer &window_pixel_bufer, const scene_manager &scen
             gm_vector<double, 3> sphere_to_light_vec = light_point - sphere_point;
     
 
-            gm_vector<double, 3> summary_intensity = cord_mul(scene.get_ambient_intensity(), scene.get_sphere_color());
-
-            summary_intensity += cord_mul(get_defuse_light_intensity(sphere_to_light_vec, sphere_normal_vec, scene.get_defuse_intensity()),
-                                          scene.get_sphere_color());
+            gm_vector<double, 3> ambient_intensity = cord_mul(scene.get_ambient_intensity(), scene.get_sphere_color());
             
+            
+            gm_vector<double, 3> defuse_intensity = cord_mul(
+                get_defuse_light_intensity(sphere_to_light_vec, sphere_normal_vec, scene.get_defuse_intensity()),
+                scene.get_sphere_color()
+            );
 
-            summary_intensity += get_specular_intensity(sphere_to_light_vec, sphere_point, sphere.get_center(), camera_pos, 
+            gm_vector<double, 3> specular_intensity = get_specular_intensity(sphere_to_light_vec, sphere_point, sphere.get_center(), camera_pos, 
                                                          scene.get_specular_intensity(), scene.get_view_light_pow());
             
-            // summary_intensity = get_shadow(sphere_point, summary_intensity, scene);
+
+            double shadow_factor = 1;                                             
+            if (!(defuse_intensity == gm_vector<double, 3>(0, 0, 0))) {
+                shadow_factor = get_shadow_factor(sphere_point, intersection_sphere_idx, scene);
+            }
+            
+            
+            gm_vector<double, 3> summary_intensity = gm_vector<double, 3>(0, 0, 0);
+
+           summary_intensity = 
+                ambient_intensity + 
+                (defuse_intensity + specular_intensity ) * shadow_factor;
 
             summary_intensity = summary_intensity.clamp(0.0, 1.0);
             draw_pixel(window_pixel_bufer, pixel, summary_intensity);
